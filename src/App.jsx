@@ -4,6 +4,8 @@ import Player from "./components/Player";
 import Log from "./components/Log";
 import { WINNING_COMBINATIONS } from "./winning-combinations.js";
 import GameOver from "./components/GameOver.jsx";
+import { logPageView } from './analytics';
+
 
 const PLAYERS = {
   X: "Player 1",
@@ -55,6 +57,17 @@ const deriveWinner = (gameBoard, players) => {
 };
 
 function App() {
+
+  useEffect(() => {
+    logPageView();
+    const handleRouteChange = () => logPageView();
+    window.addEventListener('popstate', handleRouteChange);
+
+    return () => {
+      window.removeEventListener('popstate', handleRouteChange);
+    };
+  }, []);
+
   const [players, setPlayers] = useState(PLAYERS);
   const [gameTurns, setGameTurns] = useState([]);
   const activePlayer = deriveActivePlayer(gameTurns);
